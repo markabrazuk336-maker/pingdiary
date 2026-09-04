@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PingDiary — тест скорости интернета с дневником замеров</title>
+<meta name="description" content="Тест скорости интернета в браузере: загрузка, отдача, пинг и джиттер. Каждый замер сохраняется в локальный дневник — можно сравнивать замеры между собой и смотреть графики.">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+      <path d="M2 18h6l3-9 5 16 4-11 3 4h7" fill="none" stroke="currentColor" stroke-width="2.4"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    <span>Ping<b>Diary</b></span>
+  </div>
+
+  <nav class="tabs" id="tabs">
+    <button class="tab is-active" data-tab="test" data-i18n="tab.test">Тест</button>
+    <button class="tab" data-tab="history" data-i18n="tab.history">Дневник</button>
+    <button class="tab" data-tab="compare" data-i18n="tab.compare">Сравнение</button>
+    <button class="tab" data-tab="stats" data-i18n="tab.stats">Статистика</button>
+  </nav>
+
+  <div class="topbar-actions">
+    <button class="icon-btn" id="theme-toggle" title="Тема" aria-label="Тема">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M21 13a8.5 8.5 0 1 1-10-10 7 7 0 0 0 10 10Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="icon-btn lang-btn" id="lang-toggle" title="Язык / Language">RU</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============================ ТЕСТ ============================ -->
+<section class="view is-active" id="view-test">
+  <div class="test-layout">
+
+    <div class="card gauge-card">
+      <div class="gauge">
+        <svg viewBox="0 0 200 200" class="gauge-svg" aria-hidden="true">
+          <circle class="gauge-track" cx="100" cy="100" r="84"/>
+          <circle class="gauge-fill" id="gauge-fill" cx="100" cy="100" r="84"/>
+        </svg>
+        <div class="gauge-center">
+          <div class="gauge-phase" id="gauge-phase" data-i18n="phase.idle">Готов к тесту</div>
+          <div class="gauge-value" id="gauge-value">0.00</div>
+          <div class="gauge-unit" id="gauge-unit" data-i18n="unit.mbps">Мбит/с</div>
+        </div>
+      </div>
+
+      <button class="btn btn-primary btn-start" id="btn-start" data-i18n="btn.start">Начать тест</button>
+
+      <div class="run-meta">
+        <input class="input" id="run-label" maxlength="40" placeholder="Метка замера: Wi-Fi кухня, LTE, кабель…" data-i18n-ph="ph.label">
+        <label class="check"><input type="checkbox" id="auto-save" checked> <span data-i18n="opt.autosave">Записывать в дневник</span></label>
+      </div>
+    </div>
+
+    <div class="stack">
+      <div class="metrics">
+        <div class="card metric">
+          <div class="metric-head"><span class="dot dot-down"></span><span data-i18n="m.download">Загрузка</span></div>
+          <div class="metric-value" id="m-down">—</div>
+          <div class="metric-unit" data-i18n="unit.mbps">Мбит/с</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-head"><span class="dot dot-up"></span><span data-i18n="m.upload">Отдача</span></div>
+          <div class="metric-value" id="m-up">—</div>
+          <div class="metric-unit" data-i18n="unit.mbps">Мбит/с</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-head"><span class="dot dot-ping"></span><span data-i18n="m.ping">Пинг</span></div>
+          <div class="metric-value" id="m-ping">—</div>
+          <div class="metric-unit" data-i18n="unit.ms">мс</div>
+        </div>
+        <div class="card metric">
+          <div class="metric-head"><span class="dot dot-jit"></span><span data-i18n="m.jitter">Джиттер</span></div>
+          <div class="metric-value" id="m-jitter">—</div>
+          <div class="metric-unit" data-i18n="unit.ms">мс</div>
+        </div>
+      </div>
+
+      <div class="card live-card">
+        <div class="card-title" data-i18n="live.title">Ход теста</div>
+        <svg class="live-chart" id="live-chart" viewBox="0 0 600 200"></svg>
+        <div class="legend">
+          <span class="legend-item"><i class="sw sw-down"></i><span data-i18n="m.download">Загрузка</span></span>
+          <span class="legend-item"><i class="sw sw-up"></i><span data-i18n="m.upload">Отдача</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title" data-i18n="conn.title">Соединение</div>
+        <dl class="kv">
+          <div><dt data-i18n="conn.isp">Провайдер</dt><dd id="c-isp">—</dd></div>
+          <div><dt data-i18n="conn.ip">IP-адрес</dt><dd id="c-ip">—</dd></div>
+          <div><dt data-i18n="conn.server">Сервер</dt><dd id="c-server">—</dd></div>
+          <div><dt data-i18n="conn.net">Сеть устройства</dt><dd id="c-net">—</dd></div>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ ДНЕВНИК ============================ -->
+<section class="view" id="view-history">
+  <div class="card">
+    <div class="toolbar">
+      <input class="input" id="hist-search" placeholder="Поиск по метке или провайдеру" data-i18n-ph="ph.search">
+      <select class="input select" id="hist-sort">
+        <option value="ts-desc" data-i18n="sort.new">Сначала новые</option>
+        <option value="ts-asc" data-i18n="sort.old">Сначала старые</option>
+        <option value="down-desc" data-i18n="sort.downdesc">Загрузка: больше</option>
+        <option value="down-asc" data-i18n="sort.downasc">Загрузка: меньше</option>
+        <option value="ping-asc" data-i18n="sort.pingasc">Пинг: меньше</option>
+      </select>
+      <div class="spacer"></div>
+      <button class="btn" id="btn-export-json" data-i18n="btn.exportJson">Экспорт JSON</button>
+      <button class="btn" id="btn-export-csv" data-i18n="btn.exportCsv">Экспорт CSV</button>
+      <button class="btn" id="btn-import" data-i18n="btn.import">Импорт</button>
+      <input type="file" id="file-import" accept="application/json,.json" hidden>
+      <button class="btn btn-danger" id="btn-clear" data-i18n="btn.clear">Очистить</button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="th-check"><input type="checkbox" id="check-all" title="Выбрать все"></th>
+            <th data-i18n="th.date">Дата</th>
+            <th data-i18n="th.label">Метка</th>
+            <th class="num" data-i18n="th.down">↓ Мбит/с</th>
+            <th class="num" data-i18n="th.up">↑ Мбит/с</th>
+            <th class="num" data-i18n="th.ping">Пинг</th>
+            <th class="num" data-i18n="th.jitter">Джиттер</th>
+            <th data-i18n="th.isp">Провайдер</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="hist-body"></tbody>
+      </table>
+      <div class="empty" id="hist-empty" hidden data-i18n="empty.history">Дневник пуст — запустите первый тест.</div>
+    </div>
+
+    <div class="hist-foot">
+      <span id="hist-count" class="muted"></span>
+      <button class="btn btn-primary" id="btn-goto-compare" data-i18n="btn.compareSel" disabled>Сравнить выбранные</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================ СРАВНЕНИЕ ============================ -->
+<section class="view" id="view-compare">
+  <div class="card">
+    <div class="card-title" data-i18n="cmp.title">Сравнение двух замеров</div>
+    <div class="cmp-pickers">
+      <label class="field"><span data-i18n="cmp.a">Замер A</span><select class="input select" id="cmp-a"></select></label>
+      <label class="field"><span data-i18n="cmp.b">Замер B</span><select class="input select" id="cmp-b"></select></label>
+    </div>
+    <div id="cmp-result" class="cmp-result"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title" data-i18n="cmp.groups">Средние значения по меткам</div>
+    <div id="cmp-groups" class="groups"></div>
+  </div>
+</section>
+
+<!-- ============================ СТАТИСТИКА ============================ -->
+<section class="view" id="view-stats">
+  <div class="card">
+    <div class="toolbar">
+      <div class="segmented" id="stat-metric">
+        <button class="seg is-active" data-metric="down" data-i18n="m.download">Загрузка</button>
+        <button class="seg" data-metric="up" data-i18n="m.upload">Отдача</button>
+        <button class="seg" data-metric="ping" data-i18n="m.ping">Пинг</button>
+        <button class="seg" data-metric="jitter" data-i18n="m.jitter">Джиттер</button>
+      </div>
+      <div class="spacer"></div>
+      <select class="input select" id="stat-range">
+        <option value="7" data-i18n="range.7">7 дней</option>
+        <option value="30" data-i18n="range.30">30 дней</option>
+        <option value="0" selected data-i18n="range.all">Всё время</option>
+      </select>
+    </div>
+    <svg class="history-chart" id="stat-chart" viewBox="0 0 800 300"></svg>
+    <div class="empty" id="stat-empty" hidden data-i18n="empty.stats">Нужен хотя бы один сохранённый замер.</div>
+  </div>
+
+  <div class="summary" id="stat-summary"></div>
+
+  <div class="card">
+    <div class="card-title" data-i18n="stats.byHour">Средняя скорость по времени суток</div>
+    <svg class="hour-chart" id="hour-chart" viewBox="0 0 800 220"></svg>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <span data-i18n="footer.note">Замеры хранятся только в вашем браузере. Тестовый трафик идёт через speed.cloudflare.com.</span>
+  <a href="https://github.com/markabrazuk336-maker/pingdiary" target="_blank" rel="noopener">GitHub</a>
+</footer>
+
+<div class="toast" id="toast" hidden></div>
+
+<script type="module" src="src/main.js"></script>
+</body>
+</html>
