@@ -15,6 +15,7 @@ const state = {
   history: store.loadHistory(),
   settings: store.loadSettings(),
   test: null,          // активный SpeedTest, если тест идёт
+  meta: null,          // последние сведения о соединении
   livePoints: [],      // точки графика текущего теста
   testStartedAt: 0,
   selected: new Set(), // отмеченные в дневнике замеры
@@ -74,6 +75,7 @@ function resetTestUI() {
 }
 
 function showMeta(meta) {
+  state.meta = meta; // чтобы перерисовать карточку при смене языка
   $('#c-isp').textContent = meta?.asOrganization || '—';
   $('#c-ip').textContent = meta?.clientIp || '—';
   $('#c-server').textContent = coloLabel(meta) || '—';
@@ -548,6 +550,7 @@ function applySettings() {
 
 function redrawEverything() {
   applyTranslations();
+  showMeta(state.meta);
   renderHistory();
   renderCompare();
   if (state.tab === 'stats') renderStats();

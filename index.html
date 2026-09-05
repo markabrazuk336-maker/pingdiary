@@ -4,10 +4,35 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>PingDiary — тест скорости интернета с дневником замеров</title>
-<meta name="description" content="Тест скорости интернета в браузере: загрузка, отдача, пинг и джиттер. Каждый замер сохраняется в локальный дневник — можно сравнивать замеры между собой и смотреть графики.">
+<meta name="description" content="Тест скорости интернета в браузере: загрузка, отдача, пинг и джиттер. Каждый замер сохраняется в дневник — сравнивайте комнаты, сети и время суток и проверяйте, соответствует ли скорость тарифу.">
+<link rel="canonical" href="https://markabrazuk336-maker.github.io/pingdiary/">
 <link rel="icon" href="favicon.ico" sizes="32x32">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css">
+
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://markabrazuk336-maker.github.io/pingdiary/">
+<meta property="og:title" content="PingDiary — тест скорости интернета с дневником замеров">
+<meta property="og:description" content="Загрузка, отдача, пинг и джиттер прямо в браузере. Каждый замер сохраняется, получает метку и сравнивается с любым другим.">
+<meta property="og:image" content="https://markabrazuk336-maker.github.io/pingdiary/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "PingDiary",
+  "url": "https://markabrazuk336-maker.github.io/pingdiary/",
+  "applicationCategory": "UtilitiesApplication",
+  "operatingSystem": "Любой браузер",
+  "inLanguage": ["ru", "en"],
+  "description": "Тест скорости интернета с дневником замеров: загрузка, отдача, пинг и джиттер сохраняются локально, получают метки и сравниваются между собой.",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" }
+}
+</script>
 </head>
 <body>
 
@@ -39,6 +64,10 @@
 
 <!-- ============================ ТЕСТ ============================ -->
 <section class="view is-active" id="view-test">
+  <!-- Заголовок страницы для поисковиков и скринридеров: визуально его роль
+       играет логотип в шапке, поэтому сам текст скрыт. -->
+  <h1 class="visually-hidden" data-i18n="page.h1">PingDiary — тест скорости интернета с дневником замеров</h1>
+
   <div class="test-layout">
 
     <div class="card gauge-card">
@@ -106,6 +135,28 @@
       </div>
     </div>
   </div>
+
+  <section class="about">
+    <h2 class="about-title" data-i18n="about.title">Зачем вести дневник замеров</h2>
+    <div class="about-grid">
+      <article>
+        <h3 data-i18n="about.rooms.h">Сравнить комнаты и сети</h3>
+        <p data-i18n="about.rooms.p">Замерьте у роутера, на кухне и в дальней комнате, поставьте каждому замеру метку — и увидите, где Wi-Fi проседает и стоит ли переставлять роутер. Кабель, Wi-Fi и мобильный интернет сравниваются так же.</p>
+      </article>
+      <article>
+        <h3 data-i18n="about.evening.h">Поймать вечерние просадки</h3>
+        <p data-i18n="about.evening.p">График по времени суток покажет, правда ли скорость падает вечером, или дело в конкретном сайте. Один замер об этом сказать не может — нужна история.</p>
+      </article>
+      <article>
+        <h3 data-i18n="about.plan.h">Проверить, соответствует ли скорость тарифу</h3>
+        <p data-i18n="about.plan.p">Регулярные замеры показывают, получаете ли вы то, за что платите. Среднее за неделю — куда более честный аргумент в разговоре с провайдером, чем один скриншот.</p>
+      </article>
+      <article>
+        <h3 data-i18n="about.export.h">Выгрузить историю замеров</h3>
+        <p data-i18n="about.export.p">Экспорт в CSV или JSON: пригодится и для обращения к провайдеру, и чтобы перенести дневник на другое устройство. Данные никуда не отправляются — они лежат в вашем браузере.</p>
+      </article>
+    </div>
+  </section>
 </section>
 
 <!-- ============================ ДНЕВНИК ============================ -->
